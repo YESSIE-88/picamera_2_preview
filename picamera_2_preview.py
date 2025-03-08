@@ -1,16 +1,21 @@
-from pprint import *
 from picamera2 import Picamera2, Preview
 import time
 
+# Initialize the camera
 picam2 = Picamera2()
-# See each camera mode option (res, fps, color depth etc)
-#print('\n\n\n\n\n')
-#pprint (pican2. sensor_modes)
-#print('\n\n\n\n\n')
 
-camera_config = picam2.create_preview_configuration (main={"size": (2028, 1074)}) # 50 fps, 1920, 1080 preview, with best cam resolution available picam2.configure(camera_config)
+# Configure camera resolution and preview size
+camera_config = picam2.create_preview_configuration(main={"size": (1920, 1080)})
+picam2.configure(camera_config)
 
-picam2.start_preview (Preview.QTGL, width=1920, height=1880)
+# Start the camera preview with hardware acceleration
+picam2.start_preview(Preview.QTGL)  # Uses Qt OpenGL for HW acceleration
 picam2.start()
 
-time.sleep(86400) #One Day
+try:
+    while True:
+        time.sleep(1)  # Keep running while preview is active
+except KeyboardInterrupt:
+    print("\nStopping camera preview...")
+    picam2.stop_preview()
+    picam2.close()
